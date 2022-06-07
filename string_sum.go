@@ -8,9 +8,8 @@ import (
 )
 
 var (
-	errorEmptyInput          = errors.New("input is empty")
-	errorNotTwoOperands      = errors.New("expecting two operands, but received more or less")
-	errorCannotParseArgument = errors.New("expecting an operand to be a number")
+	errorEmptyInput     = errors.New("input is empty")
+	errorNotTwoOperands = errors.New("expecting two operands, but received more or less")
 )
 
 // Implement a function that computes the sum of two int numbers written as a string
@@ -45,12 +44,12 @@ func StringSum(input string) (output string, err error) {
 
 	a, err := strconv.Atoi(submatches[1])
 	if err != nil {
-		return "", ThrowError("Should Be Number (first)", errorCannotParseArgument)
+		return "", ThrowError("Should Be Number (first)", err)
 	}
 
 	b, err := strconv.Atoi(submatches[2])
 	if err != nil {
-		return "", ThrowError("Should be Number (second)", errorCannotParseArgument)
+		return "", ThrowError("Should be Number (second)", err)
 	}
 
 	sum := a + b
