@@ -2,6 +2,8 @@ package string_sum
 
 import (
 	"errors"
+	"regexp"
+	"strconv"
 )
 
 //use these errors as appropriate, wrapping them with fmt.Errorf function
@@ -22,6 +24,26 @@ var (
 //
 // Use the errors defined above as described, again wrapping into fmt.Errorf
 
+var SPACE_REGEXP = regexp.MustCompile(`\s+`)
+var EXPRESSION_REGEXP = regexp.MustCompile(`^([+-]?\d{1,})([+-]\d{1,})$`)
+
 func StringSum(input string) (output string, err error) {
-	return "", nil
+	str := SPACE_REGEXP.ReplaceAllString(input, "")
+
+	if str == "" {
+		return "", errorEmptyInput
+	}
+
+	submatches := EXPRESSION_REGEXP.FindStringSubmatch(str)
+
+	if len(submatches) != 3 {
+		return "", errorNotTwoOperands
+	}
+
+	a, _ := strconv.Atoi(submatches[1])
+	b, _ := strconv.Atoi(submatches[2])
+
+	sum := a + b
+
+	return strconv.Itoa(sum), err
 }
