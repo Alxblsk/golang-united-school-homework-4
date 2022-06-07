@@ -2,16 +2,15 @@ package string_sum
 
 import (
 	"errors"
+	"fmt"
 	"regexp"
 	"strconv"
 )
 
-//use these errors as appropriate, wrapping them with fmt.Errorf function
 var (
-	// Use when the input is empty, and input is considered empty if the string contains only whitespace
-	errorEmptyInput = errors.New("input is empty")
-	// Use when the expression has number of operands not equal to two
-	errorNotTwoOperands = errors.New("expecting two operands, but received more or less")
+	errorEmptyInput          = errors.New("input is empty")
+	errorNotTwoOperands      = errors.New("expecting two operands, but received more or less")
+	errorCannotParseArgument = errors.New("expecting an operand to be a number")
 )
 
 // Implement a function that computes the sum of two int numbers written as a string
@@ -25,23 +24,34 @@ var (
 // Use the errors defined above as described, again wrapping into fmt.Errorf
 
 var SPACE_REGEXP = regexp.MustCompile(`\s+`)
-var EXPRESSION_REGEXP = regexp.MustCompile(`^([+-]?\d{1,})([+-]\d{1,})$`)
+var EXPRESSION_REGEXP = regexp.MustCompile(`^([+-]?[\d\w]{1,})([+-][\d\w]{1,})$`)
+
+func ThrowError(message string, err error) (resultErr error) {
+	return fmt.Errorf(message+": %w", err)
+}
 
 func StringSum(input string) (output string, err error) {
 	str := SPACE_REGEXP.ReplaceAllString(input, "")
 
 	if str == "" {
-		return "", errorEmptyInput
+		return "", ThrowError("Empty", errorEmptyInput)
 	}
 
 	submatches := EXPRESSION_REGEXP.FindStringSubmatch(str)
 
 	if len(submatches) != 3 {
-		return "", errorNotTwoOperands
+		return "", ThrowError("Operands Amount", errorNotTwoOperands)
 	}
 
-	a, _ := strconv.Atoi(submatches[1])
-	b, _ := strconv.Atoi(submatches[2])
+	a, err := strconv.Atoi(submatches[1])
+	if err != nil {
+		return "", ThrowError("Should Be Number (first)", errorCannotParseArgument)
+	}
+
+	b, err := strconv.Atoi(submatches[2])
+	if err != nil {
+		return "", ThrowError("Should be Number (second)", errorCannotParseArgument)
+	}
 
 	sum := a + b
 
